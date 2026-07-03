@@ -2,13 +2,14 @@
 
 Current unresolved concerns for this project.
 
-## 1. Runtime validation
-- Confirm the app works end-to-end with the restored PHP, Node, and npm PATH configuration.
-- Run `npm start` or an equivalent launch to verify the Electron app loads the PHP backend and UI correctly.
+## 1. UI polish
+- Make delete/remove actions harder to trigger accidentally or hide them behind confirmation flows.
+- Review any remaining header/footer or schedule display polish before finalizing the UI.
 
-## 2. Repository cleanup decision
-- Decide whether `database_backup.sql` should remain in the active repo or be archived/moved into `context/`.
+## 2. Final verification
+- Confirm the app works end-to-end with the PHP backend and UI.
+- Verify teacher/section add/edit/delete flows behave correctly and no fatal API errors remain.
 
 ## 3. Documentation coverage
-- Ensure the new `context/` files fully describe the current project architecture, frontend, backend, and packaging.
-- Add any missing context notes for future review.
+- Ensure the `context/` files describe the current project architecture, frontend, backend, and packaging.
+- Add any missing notes for future review.
