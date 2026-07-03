@@ -3,16 +3,35 @@
 // STATIC REFERENCE DATA
 // ============================================================
 
+// Determine API base URL:
+// - When the UI is opened via a file:// URL (double-clicking index.html),
+//   prefer the local PHP server at http://localhost:8080 so fetch() targets
+//   the running PHP dev server instead of resolving to file paths.
+// - When served over HTTP (e.g. from the PHP server or Electron), use the
+//   current origin.
+const API_BASE = (function(){
+    try {
+        if (window.location && window.location.protocol === 'file:') {
+            return 'http://localhost:8080/';
+        }
+        // Ensure origin ends with a slash
+        const origin = window.location.origin || '';
+        return origin.endsWith('/') ? origin : origin + '/';
+    } catch (e) {
+        return 'http://localhost:8080/';
+    }
+})();
+
 const API = {
-    schedule:  'api/schedule.php',
-    teachers:  'api/teachers.php',
-    sections:  'api/sections.php',
-    conflicts: 'api/conflicts.php',
-    stats:     'api/stats.php',
-    subjects:  'api/subjects.php',
-    strands:   'api/strands.php',
-    electives: 'api/electives.php',
-    autoSchedule: 'api/auto_schedule.php',
+    schedule:    API_BASE + 'api/schedule.php',
+    teachers:    API_BASE + 'api/teachers.php',
+    sections:    API_BASE + 'api/sections.php',
+    conflicts:   API_BASE + 'api/conflicts.php',
+    stats:       API_BASE + 'api/stats.php',
+    subjects:    API_BASE + 'api/subjects.php',
+    strands:     API_BASE + 'api/strands.php',
+    electives:   API_BASE + 'api/electives.php',
+    autoSchedule:API_BASE + 'api/auto_schedule.php',
 };
 
 const GRADE_LEVELS = [

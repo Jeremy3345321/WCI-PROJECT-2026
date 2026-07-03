@@ -1240,10 +1240,26 @@ function switchView(view) {
 
     if (view === 'dashboard')    renderDashboard();
     if (view === 'teachers')     loadTeachersFromDB().then(() => initializeTeacherView());
-    if (view === 'sections')     renderSectionView();
+    if (view === 'sections') {
+        clearSectionScheduleDisplay();
+        renderSectionView();
+    }
     if (view === 'subjects')     renderSubjectsView();
     if (view === 'teacherinfo')  renderTeacherInfoView();
 }
+
+function clearSectionScheduleDisplay() {
+    const title = document.getElementById('sectionSchedTitle');
+    const body  = document.getElementById('sectionSchedBody');
+    const printBtn = document.getElementById('printScheduleBtn');
+    const badge = document.getElementById('sectionStrandBadge');
+
+    if (title) title.textContent = 'Select a section above';
+    if (body) body.innerHTML = '';
+    if (printBtn) printBtn.style.display = 'none';
+    if (badge) badge.innerHTML = '';
+}
+
  
  
 // ============================================================

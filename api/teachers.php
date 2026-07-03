@@ -64,12 +64,22 @@ if ($method === 'GET') {
         
         $teachers = [];
         while ($row = $result->fetch_assoc()) {
-            $subjectsArr = $row['subjects']
-                ? array_values(array_filter(explode('|', $row['subjects'])))
-                : ($row['subject'] ? [$row['subject']] : []);
+            $subjectsArr = [];
+            if ($row['subjects']) {
+                $subjectsArr = json_decode($row['subjects'], true);
+                if (json_last_error() !== JSON_ERROR_NONE || !is_array($subjectsArr)) {
+                    $subjectsArr = array_values(array_filter(explode('|', $row['subjects'])));
+                }
+            }
+            if (empty($subjectsArr) && $row['subject']) {
+                $subjectsArr = [$row['subject']];
+            }
             $availObj = $row['availability'] ? json_decode($row['availability'], true) : [];
+            if (json_last_error() !== JSON_ERROR_NONE) { $availObj = []; }
             $deptObj = $row['departments'] ? json_decode($row['departments'], true) : [];
+            if (json_last_error() !== JSON_ERROR_NONE) { $deptObj = []; }
             $jhsGradesObj = $row['jhs_grades'] ? json_decode($row['jhs_grades'], true) : [];
+            if (json_last_error() !== JSON_ERROR_NONE) { $jhsGradesObj = []; }
             $teachers[] = [
                 'id'               => $row['id'],
                 'name'             => $row['name'],
@@ -119,11 +129,14 @@ if ($method === 'POST') {
             }
         }
 
-        $subjects   = array_values(array_unique(array_filter(array_map('trim', (array)$subjects))));
-        $subjStr    = implode('|', $subjects);
-        $firstSubj  = $subjects[0] ?? $subject;
-        $availJson  = json_encode($availability ?: (object)[]);
-        $deptJson   = json_encode($departments ?: (object)[]);
+        $subjects = array_values(array_unique(array_filter(array_map('trim', (array)$subjects))));
+        if (empty($subjects) && $subject) {
+            $subjects[] = $subject;
+        }
+        $firstSubj    = $subjects[0] ?? $subject;
+        $subjJson     = json_encode($subjects);
+        $availJson    = json_encode($availability ?: (object)[]);
+        $deptJson     = json_encode($departments ?: (object)[]);
         $jhsGradesJson = json_encode($jhs_grades ?: (object)[]);
 
         $id = strtoupper(preg_replace('/[^A-Z0-9]/i', '_', preg_replace('/^(MR\.|MRS\.|MS\.|DR\.)\s*/i', '', $name)));
@@ -143,7 +156,7 @@ if ($method === 'POST') {
         if ($check->get_result()->num_rows > 0) $id = $id . '_' . rand(10, 99);
 
         $stmt = $db->prepare("INSERT INTO teachers (id, name, subject, subjects, availability, departments, employment_type, `load`, jhs_grades) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param('sssssssss', $id, $name, $firstSubj, $subjStr, $availJson, $deptJson, $employment_type, $load, $jhsGradesJson);
+        $stmt->bind_param('sssssssss', $id, $name, $firstSubj, $subjJson, $availJson, $deptJson, $employment_type, $load, $jhsGradesJson);
         if ($stmt->execute()) {
             $db->close();
             respond(['success' => true, 'id' => $id, 'name' => $name]);
@@ -221,15 +234,18 @@ if ($method === 'PUT') {
             }
         }
 
-        $subjects  = array_values(array_unique(array_filter(array_map('trim', (array)$subjects))));
-        $subjStr   = implode('|', $subjects);
-        $firstSubj = $subjects[0] ?? $subject;
-        $availJson = json_encode($availability ?: (object)[]);
-        $deptJson  = json_encode($departments ?: (object)[]);
+        $subjects = array_values(array_unique(array_filter(array_map('trim', (array)$subjects))));
+        if (empty($subjects) && $subject) {
+            $subjects[] = $subject;
+        }
+        $firstSubj    = $subjects[0] ?? $subject;
+        $subjJson     = json_encode($subjects);
+        $availJson    = json_encode($availability ?: (object)[]);
+        $deptJson     = json_encode($departments ?: (object)[]);
         $jhsGradesJson = json_encode($jhs_grades ?: (object)[]);
 
         $stmt = $db->prepare("UPDATE teachers SET name=?, subject=?, subjects=?, availability=?, employment_type=?, departments=?, `load`=?, jhs_grades=? WHERE id=?");
-        $stmt->bind_param('sssssssss', $name, $firstSubj, $subjStr, $availJson, $employment_type, $deptJson, $load, $jhsGradesJson, $id);
+        $stmt->bind_param('sssssssss', $name, $firstSubj, $subjJson, $availJson, $employment_type, $deptJson, $load, $jhsGradesJson, $id);
         if ($stmt->execute()) {
             $db->close();
             respond(['success' => true, 'message' => 'Teacher updated']);

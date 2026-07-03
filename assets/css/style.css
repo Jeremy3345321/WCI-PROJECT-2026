@@ -241,6 +241,15 @@ body {
   white-space: nowrap;
 }
 
+#themeToggle {
+  width: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .btn-theme:hover { border-color: var(--accent); color: var(--accent); }
 .btn-reset:hover  { border-color: var(--red);    color: var(--red); }
 
@@ -1749,9 +1758,9 @@ body {
     margin-left: 10px; /* Adjust for smaller screens */
 }
 
-.brand-icon img {
-    width: 80px !important;
-    height: 80px !important;
+#navbar .brand-icon img {
+    width: 38px !important;
+    height: 38px !important;
     object-fit: contain;
     border-radius: 50%;
     display: block;

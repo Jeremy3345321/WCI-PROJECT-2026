@@ -3,7 +3,7 @@
 This file provides a quick reference for the project and the rules to follow when updating code.
 
 ## Key Files
-- `TODO.md` — Current unresolved project concerns and cleanup decisions.
+- `TODO.md` — Current unresolved project concerns and cleanup decisions. Update as concerns are resolved
 - `context/project-overview.md` — High-level summary of the app.
 - `context/architecture.md` — Architecture and component relationships.
 - `context/dependencies.md` — Runtime and development dependency details.
